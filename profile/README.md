@@ -1,95 +1,105 @@
 # DICATAT.IN 🚀
 
 **Elevating the Way You Learn, Inclusively.**
+Dicatat.in is an advanced, AI-powered note-taking platform built to transform messy, unstructured handwritten notes into beautifully structured, highly visual digital formats. It leverages a dynamic interactive canvas, a sophisticated AI processing pipeline, and proven pedagogical methods to help students and professionals learn more effectively.
 
-DICATAT.IN is an AI-powered note-taking platform designed to transform messy handwritten notes into beautifully structured digital formats. Built with modern web technologies, it features an interactive canvas, support for 7 proven note-taking methods, auto-layout capabilities, and an integrated flashcard system for active recall.
+This repository serves as the central hub for the DICATAT.IN ecosystem, which is divided into three main microservices: Frontend, Backend, and Machine Learning.
 
 ---
 
-## ✨ Features
+## 🏗️ System Architecture & Ecosystem
 
-*   **7 Proven Note-Taking Methods**: 
-    *   🧠 Mind Map
-    *   📋 Cornell Notes
-    *   📦 Boxing
-    *   📊 Charting
-    *   🔗 Zettelkasten
-    *   🎨 Sketchnoting
-    *   💡 Feynman Technique
-*   **Interactive Infinite Canvas**: Powered by React Flow, featuring a fully editable A4 workspace with drag-and-drop, connection edges, and zoom controls.
-*   **Smart Auto-Layout**: Integrated `elkjs` layout engine automatically organizes your notes based on the chosen method's optimal structure.
-*   **Accessibility First**: Built-in Dyslexia-friendly mode featuring the OpenDyslexic font and tailored spacing adjustments.
-*   **Active Recall**: Integrated 3D-flippable flashcard system automatically generated from your notes.
-*   **PDF Export**: High-fidelity vector-like PDF exports of your A4 canvas.
-*   **Dark-Blue Premium Theme**: A carefully crafted, professional dark mode UI with glassmorphism effects and fluid animations.
+The DICATAT.IN platform consists of three core services working seamlessly together:
+
+1. **[FE] Frontend (`fe-dicatatin`)**: The user-facing application built with React. It provides an interactive infinite canvas (React Flow), 3D flashcards, and a premium dark-mode UI.
+2. **[BE] Backend (`be-dicatatin`)**: The robust API gateway built with Laravel. It handles user authentication, workspace persistence (PostgreSQL), image asset management (Cloudinary), and orchestrates asynchronous tasks with the ML service.
+3. **[ML] Machine Learning Engine (`ml-dicatatin`)**: The core AI processing pipeline built with FastAPI. It performs OCR using OpenAI Vision API, sanitizes text, transforms unstructured notes into structured React Flow graphs, and generates SM-2 compliant flashcards.
+
+### Data Flow
+`User uploads image (FE) -> Backend API (BE) -> Queue -> Processed by ML Engine (ML) -> Structured JSON output saved to DB (BE) -> Rendered on Canvas (FE)`
+
+---
+
+## ✨ Key Features
+
+*   **7 Proven Note-Taking Methods**: The AI automatically structures notes into Mind Map, Cornell Notes, Boxing, Charting, Zettelkasten, Sketchnoting, or Feynman Technique.
+*   **Smart AI Pipeline**: End-to-end processing including OCR (Vision API), text sanitization (typo fixing & abbreviation expansion), and semantic chunking.
+*   **Interactive Infinite Canvas**: Fully editable A4 workspace with drag-and-drop, connection edges, smart auto-layout (`elkjs`), and zooming capabilities.
+*   **Active Recall Flashcards**: Automatically generated 3D-flippable flashcard system using spaced-repetition algorithms (SM-2) for active learning.
+*   **High-Fidelity PDF Export**: Vector-like PDF exports of the A4 canvas, capturing all complex SVG paths and nodes.
+*   **Accessibility First**: Built-in Dyslexia-friendly mode featuring the OpenDyslexic font and tailored CSS spacing adjustments.
+*   **Premium Dark Theme**: Carefully crafted, professional dark mode UI with glassmorphism effects and fluid micro-animations.
+
+---
 
 ## 🛠️ Tech Stack
 
-*   **Framework**: React 18+ (Vite)
-*   **Routing**: React Router v6
+### 🎨 Frontend (`fe-dicatatin`)
+*   **Framework**: React 19 (Vite)
 *   **State Management**: Zustand
-*   **Canvas Engine**: React Flow (`@xyflow/react`)
-*   **Auto Layout**: ELK (`elkjs`)
-*   **PDF Export**: `html2canvas` & `jsPDF`
-*   **Icons**: Lucide React
-*   **Styling**: Vanilla CSS with comprehensive Design System Variables
+*   **Canvas Engine**: React Flow (`@xyflow/react`) & ELK Layout (`elkjs`)
+*   **Styling**: Tailwind CSS v4 & custom CSS tokens
+*   **Utilities**: `html-to-image`, `jsPDF`, Axios
+
+### ⚙️ Backend (`be-dicatatin`)
+*   **Framework**: Laravel (PHP)
+*   **Database**: PostgreSQL
+*   **Authentication**: Laravel Sanctum (Token-based)
+*   **Storage**: Cloudinary
+*   **Infrastructure**: Docker & Docker Compose
+*   **API Docs**: Swagger / OpenAPI 3.0
+
+### 🧠 Machine Learning (`ml-dicatatin`)
+*   **Framework**: FastAPI (Python 3.11+)
+*   **AI Engine**: OpenAI API (`gpt-4o-mini`)
+*   **Structured Output**: Instructor & Pydantic
+*   **Algorithms**: SM-2 for Flashcards
+
+---
 
 ## 🚀 Getting Started
 
-### Prerequisites
+The project is designed to be easily set up locally using Docker for the backend services and npm for the frontend.
 
-*   Node.js (v18 or higher recommended)
-*   npm or yarn
+### 1. Backend & ML Services
+The Backend and ML services are containerized. You'll need Docker Desktop running.
 
-### Installation
+```bash
+cd be-dicatatin
+cp .env.example .env
+# Start the services (Postgres, Laravel, Queue worker, ML FastAPI)
+docker compose up -d
+# Setup database
+docker exec dicatatin-backend php artisan key:generate
+docker exec dicatatin-backend php artisan migrate
+```
+*API Docs available at `http://localhost:8000/docs`*
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/project-dicatatin.git
-    cd project-dicatatin
-    ```
+### 2. Frontend Application
+```bash
+cd fe-dicatatin
+npm install
+npm run dev
+```
+*App running at `http://localhost:5173`*
 
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
+*(Please refer to the `README.md` inside each respective folder for detailed environment variable setups and advanced commands).*
 
-3.  Start the development server:
-    ```bash
-    npm run dev
-    ```
-
-4.  Open your browser and navigate to `http://localhost:5173`.
-
-> **Note**: The application currently uses a mock authentication flow for development. You can log in using any email and password on the login page to access the application.
+---
 
 ## 📂 Project Structure
 
 ```text
-src/
-├── assets/            # Static files, fonts, and images
-├── components/        # Reusable UI components (Buttons, Cards, Modals)
-├── features/          # Domain-specific modules
-│   ├── auth/          # Login, Signup, AuthGuards
-│   ├── flashcard/     # Flashcard popup and flipping logic
-│   ├── home/          # Workspace gallery and creation modals
-│   ├── landing/       # Landing page sections
-│   └── workspace/     # Core editor, Canvas, Right Sidebar, Custom Nodes
-├── hooks/             # Custom React hooks (useAutosave, useKeyboardShortcuts)
-├── layouts/           # Page wrapper layouts
-├── pages/             # Route-level components
-├── services/          # API and external service integrations
-├── stores/            # Zustand global state stores
-├── styles/            # Global CSS variables and animations
-└── utils/             # Helper functions, constants, mock data, and ELK configs
+project-dicatatin/
+├── fe-dicatatin/       # React SPA (Vite, Tailwind v4, React Flow)
+├── be-dicatatin/       # Laravel REST API (Auth, Workspace CRUD, Queue)
+├── ml-dicatatin/       # FastAPI AI Engine (OCR, Transform, Flashcards)
+├── infra-dicatatin/    # Infrastructure and deployment configurations
+└── .github/            # GitHub templates and profile README
 ```
 
-## ⌨️ Keyboard Shortcuts
-
-*   `Ctrl + S` / `Cmd + S`: Save Workspace
-*   `Ctrl + E` / `Cmd + E`: Toggle Edit / View Mode
-*   `Escape`: Deselect current node or close modals/flashcards
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is proprietary and currently maintained by the DICATAT.IN development team.
